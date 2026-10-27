@@ -14,13 +14,11 @@ _This material has been written by Juha Kopu._
 5. [Positional embedding and self-attention](Attention.ipynb)
 6. [Transformer architecture](Transformer.ipynb)
 
+## Assignments & Selutions
 
-
-## Assignments
-
-1. [Week 1.](Assignments/Assignment_week1.md) 
-2. [Week 2.](Assignments/Assignment_week2.md) 
-3. [Week 3.](Assignments/Assignment_week3.md)  
-4. [Week 4.](Assignments/Assignment_week4.md)  
-5. [Week 5.](Assignments/Assignment_week5.md)  
-6. [Week 6.](Assignments/Assignment_week6.md)
+1. [Fully connected neural networks.](Assignments/Assignment_week1.md) [Selution](Selutions/Fully_connected)
+2. [Graphical monitoring and overfittin.](Assignments/Assignment_week2.md) [Selution](Selutions/Graphical_monitoring)
+3. [Image processing and convolutional neural networks.](Assignments/Assignment_week3.md) [Selution](Selutions/ConvNets)
+4. [Text preprocessing and word vectors.](Assignments/Assignment_week4.md) [Selution](Selutions/Text_preprocessing)
+5. [Positional embedding and self-attention.](Assignments/Assignment_week5.md) [Selution](Selutions/Attention)
+6. [Transformer architecture.](Assignments/Assignment_week6.md) [Selution](Transformer)
