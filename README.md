@@ -1,24 +1,36 @@
-# Neural networks
+# 🧠 Neural Networks
 
-Learning Resources for Neural Networks course
-which is included in the Software Engineering Curriculum at Metropolia UAS.
+> **Learning Resources for Neural Networks**
+> This repository contains course materials included in the Software Engineering Curriculum at **Metropolia UAS**.
+>
+> _Original material written by Juha Kopu._
 
-_This material has been written by Juha Kopu._
+---
 
-## Material
+## 📚 Course Material
 
-1. [Fully connected neural nets](Fully_connected.ipynb)
-2. [Graphical monitoring and overfitting](Graphical_monitoring.ipynb)
-3. [Image processing and convolutional neural nets](ConvNets.ipynb)
-4. [Text preprocessing and word vectors](Text_preprocessing.ipynb)
-5. [Positional embedding and self-attention](Attention.ipynb)
-6. [Transformer architecture](Transformer.ipynb)
+Explore the topics covered in this course through the interactive Jupyter Notebooks below:
 
-## Assignments & Selutions
+- **[01. Fully Connected Neural Nets](Fully_connected.ipynb)** – Basics of dense layers and forward/backward propagation.
+- **[02. Graphical Monitoring & Overfitting](Graphical_monitoring.ipynb)** – Visualizing training performance and regularization.
+- **[03. Image Processing & Convolutional Neural Nets](ConvNets.ipynb)** – Computer vision and CNN architectures.
+- **[04. Text Preprocessing & Word Vectors](Text_preprocessing.ipynb)** – Natural Language Processing (NLP) foundations.
+- **[05. Positional Embedding & Self-Attention](Attention.ipynb)** – Core mechanics of modern sequence models.
+- **[06. Transformer Architecture](Transformer.ipynb)** – Deep dive into the Transformer model structure.
 
-1. [Fully connected neural networks.](Assignments/Assignment_week1.md) [Selution](Selutions/Fully_connected)
-2. [Graphical monitoring and overfittin.](Assignments/Assignment_week2.md) [Selution](Selutions/Graphical_monitoring)
-3. [Image processing and convolutional neural networks.](Assignments/Assignment_week3.md) [Selution](Selutions/ConvNets)
-4. [Text preprocessing and word vectors.](Assignments/Assignment_week4.md) [Selution](Selutions/Text_preprocessing)
-5. [Positional embedding and self-attention.](Assignments/Assignment_week5.md) [Selution](Selutions/Attention)
-6. [Transformer architecture.](Assignments/Assignment_week6.md) [Selution](Transformer)
+---
+
+## 📝 Assignments & Solutions
+
+Complete the weekly challenges and review the reference solutions:
+
+|  Week  | Assignment Description                                                        | Reference Solution                            |
+| :----: | :---------------------------------------------------------------------------- | :-------------------------------------------- |
+| **01** | 📝 [Fully Connected Neural Networks](Assignments/Assignment_week1.md)         | 💡 [Solution](Selutions/Fully_connected)      |
+| **02** | 📝 [Graphical Monitoring and Overfitting](Assignments/Assignment_week2.md)    | 💡 [Solution](Selutions/Graphical_monitoring) |
+| **03** | 📝 [Image Processing and CNNs](Assignments/Assignment_week3.md)               | 💡 [Solution](Selutions/ConvNets)             |
+| **04** | 📝 [Text Preprocessing and Word Vectors](Assignments/Assignment_week4.md)     | 💡 [Solution](Selutions/Text_preprocessing)   |
+| **05** | 📝 [Positional Embedding and Self-Attention](Assignments/Assignment_week5.md) | 💡 [Solution](Selutions/Attention)            |
+| **06** | 📝 [Transformer Architecture](Assignments/Assignment_week6.md)                | 💡 [Solution](Transformer)                    |
+
+---
