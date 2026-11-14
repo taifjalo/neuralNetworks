@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>مذكرة Word Embeddings</title>
+<style>
+@page { size: A4; margin: 2cm 1.8cm; }
+body { direction: rtl; font-family: "Noto Naskh Arabic", "Noto Sans Arabic", sans-serif; color:#18212b; line-height:1.85; font-size:16px; margin:0; }
+.cover { text-align:center; padding:90px 20px 70px; border-bottom:5px solid #1e5a88; margin-bottom:28px; }
+.cover h1 { color:#124b78; font-size:34px; margin:15px 0; }
+.cover h2 { color:#4b6475; font-size:22px; font-weight:normal; }
+.cover .tag { display:inline-block; background:#e8f2f8; color:#124b78; padding:8px 18px; border-radius:20px; margin-top:25px; }
+h1,h2,h3 { color:#124b78; page-break-after:avoid; }
+h1 { font-size:27px; border-bottom:2px solid #1e5a88; padding-bottom:8px; margin-top:34px; }
+h2 { font-size:22px; margin-top:28px; }
+h3 { font-size:19px; margin-top:22px; }
+p { margin: 9px 0; }
+.callout { background:#eef7fb; border-right:5px solid #1e76a8; padding:12px 16px; margin:18px 0; }
+.warning { background:#fff6e5; border-right:5px solid #d68a00; padding:12px 16px; margin:18px 0; }
+strong { color:#123f62; }
+code { font-family:"DejaVu Sans Mono", monospace; direction:ltr; unicode-bidi:embed; background:#f0f3f5; padding:2px 5px; border-radius:3px; }
+pre { direction:ltr; text-align:left; unicode-bidi:embed; background:#f5f7f9; border:1px solid #d8e0e6; border-radius:6px; padding:13px; font-family:"DejaVu Sans Mono", monospace; font-size:12px; line-height:1.5; overflow-wrap:anywhere; white-space:pre-wrap; }
+table { border-collapse:collapse; width:100%; margin:16px 0; page-break-inside:avoid; }
+th { background:#1e5a88; color:white; }
+th,td { border:1px solid #b9c8d2; padding:8px 10px; text-align:right; vertical-align:top; }
+tr:nth-child(even) { background:#f5f8fa; }
+ul,ol { padding-right:28px; }
+li { margin:5px 0; }
+.small { color:#5d6b75; font-size:14px; }
+.pagebreak { page-break-before:always; }
+</style>
+</head>
+<body>
+<section class="cover">
+<h1>مذكرة شاملة في Word Embeddings</h1>
+<h2>من Bag of Words إلى Word2Vec وGloVe وCosine Similarity</h2>
+<p class="tag">شرح مبسط للفهم، الامتحان العملي، ومقابلات العمل</p>
+<p class="small">المحاضرة الرابعة — Text Preprocessing and Word Embeddings</p>
+</section>
+
+<h1>1. الفكرة العامة: لماذا نحتاج إلى تمثيل النص؟</h1>
+<p>النص بالنسبة إلى الإنسان يحمل معنى مباشرة، لكن الحاسوب لا يستطيع إدخال كلمة مثل <code>good</code> أو <code>king</code> إلى الشبكة العصبية كما هي. الشبكة تحتاج إلى أرقام، لذلك يجب أن نحول النص إلى تمثيل عددي.</p>
+<div class="callout"><strong>الفكرة الأساسية:</strong> نأخذ النص الخام، نقسمه إلى كلمات، ثم نحول الكلمات إلى أرقام أو متجهات تستطيع الخوارزمية معالجتها.</div>
+<p>المسار العام هو:</p>
+<pre>Raw Text
+   ↓
+Standardization
+   ↓
+Tokenization
+   ↓
+Vectorization
+   ↓
+Numerical Representation
+   ↓
+Machine Learning Model</pre>
+
+<h1>2. المراحل الأساسية لمعالجة النص</h1>
+<h2>2.1 Text Standardization</h2>
+<p>نقوم بتوحيد شكل النص، مثل تحويل الأحرف إلى lowercase وإزالة علامات الترقيم والرموز غير المهمة وتوحيد المسافات.</p>
+<pre>"I LOVE this Movie!!!"  →  "i love this movie"</pre>
+<h2>2.2 Tokenization</h2>
+<p>نقسم النص إلى وحدات تسمى <strong>Tokens</strong>. يمكن أن تكون الوحدة كلمة أو حرفًا أو مجموعة كلمات تسمى N-gram.</p>
+<pre>"this movie is great"  →  ["this", "movie", "is", "great"]</pre>
+<h2>2.3 Vectorization</h2>
+<p>نحول النص أو كل Token إلى تمثيل رقمي. هذه هي الخطوة التي تجعل النص قابلًا للإدخال إلى الشبكة العصبية.</p>
+
+<h1>3. Bag of Words</h1>
+<p>Bag of Words هي أبسط طريقة لتمثيل النصوص. ننشئ قاموسًا يحتوي على الكلمات المهمة، ثم نستخدم متجهًا يبين الكلمات الموجودة في النص.</p>
+<h2>مثال</h2>
+<p>إذا كان القاموس:</p>
+<pre>["movie", "good", "bad", "boring"]</pre>
+<p>فإن الجملة:</p>
+<pre>"good movie"</pre>
+<p>تمثل هكذا:</p>
+<pre>[1, 1, 0, 0]</pre>
+<p>أي أن <code>movie</code> و<code>good</code> موجودتان، أما <code>bad</code> و<code>boring</code> فغير موجودتين.</p>
+<h2>لماذا اسمها Bag of Words؟</h2>
+<p>تخيل أن كلمات الجملة وضعت داخل كيس. نعرف الكلمات الموجودة، لكننا لا نعرف ترتيبها أو علاقتها ببعضها. لذلك الجملتان الآتيتان قد تحصلان على تمثيل متقارب:</p>
+<pre>This movie is good
+Good movie is this</pre>
+<h2>مشكلات Bag of Words</h2>
+<ul>
+<li>لا تحفظ ترتيب الكلمات.</li>
+<li>لا تفهم المعنى والسياق.</li>
+<li>لا تعرف أن <code>good</code> و<code>excellent</code> متقاربتان.</li>
+<li>قد لا تميز جيدًا بين <code>This movie is good</code> و<code>This movie is not good</code>.</li>
+<li>تنتج متجهات كبيرة وSparse تحتوي على أصفار كثيرة.</li>
+</ul>
+
+<h1>4. تطبيق Bag of Words في Keras</h1>
+<pre>from keras.layers import TextVectorization
+
+max_tokens = 10000
+
+vectorization_layer = TextVectorization(
+    max_tokens=max_tokens,
+    output_mode="multi_hot"
+)
+
+train_texts = train_ds.map(lambda x, y: x)
+vectorization_layer.adapt(train_texts)
+
+train_ds_bow = train_ds.map(
+    lambda x, y: (vectorization_layer(x), y)
+)</pre>
+<p>إذا كان عدد الكلمات المحتفظ بها 10,000، يصبح تمثيل كل مراجعة متجهًا طوله:</p>
+<pre>(32, 10000)</pre>
+<p>أي 32 نصًا في الـ batch، وكل نص ممثل بمتجه طوله 10,000.</p>
+<div class="warning"><strong>قاعدة مهمة:</strong> يجب تنفيذ <code>adapt</code> على بيانات التدريب فقط، وليس على Validation أو Test، حتى لا يحدث Data Leakage.</div>
+<h2>ما معنى <code>max_tokens</code>؟</h2>
+<p>هو الحد الأقصى لحجم الـ Vocabulary. نحتفظ بأكثر الكلمات تكرارًا ونستبعد الكلمات النادرة أو الزائدة.</p>
+
+<h1>5. المصنف المستخدم مع Bag of Words</h1>
+<pre>model = Sequential([
+    Input(shape=(max_tokens,)),
+    Dense(16, activation="relu"),
+    Dropout(0.5),
+    Dense(1, activation="sigmoid")
+])
+
+model.compile(
+    loss="binary_crossentropy",
+    optimizer="rmsprop",
+    metrics=["accuracy"]
+)</pre>
+<p>هذه Binary Classification، لذلك نستخدم:</p>
+<ul>
+<li><code>Dense(1, activation="sigmoid")</code></li>
+<li><code>binary_crossentropy</code></li>
+</ul>
+<p>تنتج Sigmoid احتمالًا بين 0 و1. مثلًا، 0.92 تعني احتمالًا مرتفعًا للفئة الإيجابية، و0.15 تعني احتمالًا منخفضًا.</p>
+<h2>نتيجة الدرس</h2>
+<p>حقق نموذج Bag of Words تقريبًا:</p>
+<pre>Test accuracy ≈ 0.8789 = 87.89%</pre>
+<p>وهذه نتيجة قوية نسبيًا لنموذج بسيط.</p>
+
+<h1>6. Word Embedding</h1>
+<p>Word Embedding طريقة أكثر غنى لتمثيل الكلمات. بدل أن نمثل الكلمة بمتجه ضخم يحتوي على أصفار وواحدات، نمثلها بمتجه Dense صغير من أرقام عشرية.</p>
+<pre>good → [0.21, -0.44, 0.73, 0.12, ...]</pre>
+<p>قد يكون طول المتجه 50 أو 100 أو 300. الكلمات التي تظهر في سياقات متشابهة تتعلم متجهات قريبة من بعضها.</p>
+<div class="callout"><strong>Bag of Words يسأل:</strong> هل الكلمة موجودة؟<br><strong>Embedding يحاول تمثيل:</strong> ما علاقة الكلمة بالكلمات الأخرى؟</div>
+<h2>مثال تقريبي</h2>
+<pre>good       → [0.20, 0.10, 0.80, ...]
+excellent  → [0.22, 0.12, 0.78, ...]
+bad        → [-0.60, 0.30, -0.20, ...]</pre>
+<p>لأن <code>good</code> و<code>excellent</code> تظهران في سياقات متشابهة، قد تكون متجهاتهما متقاربة.</p>
+
+<h1>7. Word2Vec وGloVe</h1>
+<div class="callout"><strong>تمييز مهم جدًا:</strong> Word Embedding هو التمثيل النهائي للكلمة، أما Word2Vec وGloVe فهما طريقتان أو خوارزميتان لتعلم هذه المتجهات.</div>
+<pre>Word2Vec وGloVe
+        ↓
+يتعلمان
+        ↓
+Word Embeddings</pre>
+<h2>7.1 Word2Vec</h2>
+<p>يتعلم Word2Vec من الكلمات القريبة. الكلمات التي تظهر في سياقات متشابهة تحصل على متجهات متشابهة.</p>
+<h3>CBOW</h3>
+<p>يستخدم الكلمات المحيطة ليتوقع الكلمة الناقصة:</p>
+<pre>The cat sat on the ___  →  mat</pre>
+<h3>Skip-gram</h3>
+<p>يستخدم كلمة واحدة ليتوقع الكلمات المحيطة بها. مثلًا يستخدم <code>cat</code> ليتوقع الكلمات القريبة في الجملة.</p>
+<h2>7.2 GloVe</h2>
+<p>GloVe يعتمد على إحصائيات ظهور الكلمات معًا داخل مجموعة نصوص كبيرة. إذا ظهرت كلمتان كثيرًا في سياقات متقاربة، يحاول وضع متجهاتهما بالقرب من بعضهما.</p>
+<table><tr><th>العنصر</th><th>Word2Vec</th><th>GloVe</th></tr><tr><td>الفكرة</td><td>التنبؤ بالكلمات المحيطة</td><td>إحصائيات التشارك بين الكلمات</td></tr><tr><td>الناتج</td><td>Word Vectors</td><td>Word Vectors</td></tr><tr><td>الاستخدام</td><td>تمثيل الكلمات</td><td>تمثيل الكلمات</td></tr></table>
+<p>المهم في الامتحان: كلاهما ينتجان Word Embeddings، لكنهما يختلفان في طريقة تعلم هذه المتجهات.</p>
+
+<h1>8. ماذا فعلنا في واجب GloVe؟</h1>
+<p>لم ندرب GloVe من الصفر. استخدمنا متجهات جاهزة مسبقًا:</p>
+<pre>Pretrained GloVe Embeddings</pre>
+<p>هذه المتجهات تم تدريبها على مجموعة نصوص ضخمة، ثم حفظت في ملف. الملف يعطي علاقة:</p>
+<pre>word → vector</pre>
+<p>في النسخة التي استخدمناها، كل كلمة ممثلة بمتجه طوله 50، وعدد الكلمات يقارب 400,000 كلمة.</p>
+<pre>man = vector("man")
+woman = vector("woman")
+king = vector("king")</pre>
+<p>كل متغير من هذه المتغيرات أصبح مصفوفة أرقام حقيقية، وليس كلمة نصية.</p>
+
+<h1>9. Word Vector Arithmetic</h1>
+<p>المعادلة الأساسية في الواجب:</p>
+<pre>target_vector = woman - man + king</pre>
+<p>الفكرة الهندسية هي أخذ الاتجاه التقريبي للعلاقة:</p>
+<pre>man → woman</pre>
+<p>ثم تطبيق هذا الاتجاه على:</p>
+<pre>king</pre>
+<p>لذلك يكون الناتج قريبًا من:</p>
+<pre>queen</pre>
+<p>هذه ليست قاعدة منطقية مكتوبة داخل النموذج. النموذج تعلم انتظامًا هندسيًا من سياقات الكلمات في النصوص.</p>
+<div class="warning"><strong>تنبيه:</strong> لا نقول إن النموذج يفهم الملك والملكة مثل الإنسان. نقول إن متجهات الكلمات أظهرت علاقة هندسية تقريبية.</div>
+
+<h1>10. Cosine Similarity</h1>
+<p>بعد حساب المعادلة لا نحصل على كلمة، بل نحصل على متجه جديد. نريد معرفة أي كلمة في القاموس أقرب إلى هذا المتجه.</p>
+<p>هنا نستخدم <code>Cosine Similarity</code>، وهي تقيس تشابه اتجاه متجهين.</p>
+<h2>الفكرة البصرية</h2>
+<p>تخيل متجهين كسهمين. قد يكون أحدهما أطول، لكن إذا كانا يشيران إلى الاتجاه نفسه فهما متشابهان. لذلك تركز Cosine Similarity على الاتجاه أكثر من الحجم.</p>
+<h2>المعادلة</h2>
+<pre>cosine(a, b) = (a · b) / (||a|| ||b||)</pre>
+<table><tr><th>القيمة</th><th>المعنى</th></tr><tr><td>قريبة من 1</td><td>تشابه قوي جدًا في الاتجاه</td></tr><tr><td>قريبة من 0</td><td>لا يوجد اتجاه مشترك واضح</td></tr><tr><td>قريبة من -1</td><td>اتجاهان متعاكسان</td></tr></table>
+<p>في التطبيق ظهرت:</p>
+<pre>queen → cosine similarity = 0.8610</pre>
+<p>أي أن متجه <code>queen</code> قريب جدًا من المتجه الناتج.</p>
+<h2>التطبيق البرمجي</h2>
+<pre>normalized_vectors = word_vectors / np.linalg.norm(
+    word_vectors,
+    axis=1,
+    keepdims=True
+)
+
+target = target_vector / np.linalg.norm(target_vector)
+scores = normalized_vectors @ target</pre>
+<p>بعد التطبيع، يصبح حاصل الضرب الداخلي بين المتجهات مساويًا لـ Cosine Similarity.</p>
+<pre>best_indices = np.argsort(scores)[::-1]</pre>
+<p>هذا السطر يرتب الكلمات من الأكثر تشابهًا إلى الأقل تشابهًا.</p>
+
+<h1>11. أمثلة إضافية وتحليلها</h1>
+<h2>11.1 Paris وRome</h2>
+<pre>vec(paris) + vec(italy) - vec(france)</pre>
+<p>النتيجة الأولى كانت:</p>
+<pre>rome</pre>
+<p>العلاقة هي:</p>
+<pre>Paris : France = Rome : Italy</pre>
+<p>وهذا مثال قوي لأن النموذج نقل علاقة العاصمة والدولة من فرنسا إلى إيطاليا.</p>
+<h2>11.2 Brother وWoman</h2>
+<pre>vec(brother) + vec(woman) - vec(man)</pre>
+<p>المتوقع نظريًا هو <code>sister</code>، لكن النتائج تضمنت:</p>
+<pre>daughter, wife, mother, father, cousin</pre>
+<p>هذه الكلمات عائلية أو مرتبطة بسياقات نسائية وعائلية. النتيجة توضح أن الاتجاه الجندري تقريبي، وأن GloVe يلتقط التشابه السياقي العام وليس قاعدة عائلية رمزية دقيقة.</p>
+<h2>11.3 Walking وSwimming</h2>
+<pre>vec(swimming) + vec(walk) - vec(walking)</pre>
+<p>ظهرت كلمة <code>swim</code> بالقرب من الأعلى، لكن ظهرت أيضًا كلمات مثل <code>pool</code> و<code>rowing</code> و<code>olympic</code>. السبب أن الكلمة لا تحمل علاقة صرفية فقط، بل تظهر كذلك في سياقات رياضية ومائية.</p>
+<h2>11.4 Bigger وSmaller</h2>
+<pre>vec(smaller) + vec(big) - vec(bigger)</pre>
+<p>ظهرت:</p>
+<pre>small</pre>
+<p>وهذا يوضح أن المتجهات التقطت نمط المقارنة:</p>
+<pre>big → bigger
+small → smaller</pre>
+<p>لكن وجود كلمات أخرى مثل <code>large</code> يبين أن النتيجة تقريبية وليست قاعدة لغوية مضمونة.</p>
+
+<h1>12. الفرق بين المصطلحات المتشابهة</h1>
+<table><tr><th>المصطلح</th><th>المعنى</th></tr><tr><td>Tokenization</td><td>تقسيم النص إلى كلمات أو وحدات.</td></tr><tr><td>Vectorization</td><td>تحويل النص أو الكلمات إلى أرقام.</td></tr><tr><td>Bag of Words</td><td>تمثيل يعتمد على وجود الكلمات غالبًا.</td></tr><tr><td>Embedding</td><td>متجه Dense متعلم يمثل الكلمة.</td></tr><tr><td>Word2Vec</td><td>طريقة لتعلم Word Embeddings بالتنبؤ بالسياق.</td></tr><tr><td>GloVe</td><td>طريقة لتعلم Word Embeddings من إحصائيات التشارك.</td></tr><tr><td>Cosine Similarity</td><td>مقياس لتشابه اتجاه متجهين.</td></tr></table>
+
+<h1>13. الفرق بين Keras Embedding وGloVe</h1>
+<h2>Keras Embedding Layer</h2>
+<pre>Embedding(input_dim=10000, output_dim=64)</pre>
+<p>تبدأ غالبًا بأوزان عشوائية ثم تتعلم أثناء تدريب النموذج على بياناتك. لذلك تسمى:</p>
+<pre>Trainable Embedding</pre>
+<h2>GloVe</h2>
+<p>متجهات جاهزة تم تدريبها مسبقًا على مجموعة نصوص ضخمة. لذلك تسمى:</p>
+<pre>Pretrained Embedding</pre>
+<div class="callout"><strong>الخلاصة:</strong> Embedding Layer قد تتعلم داخل نموذجك، أما GloVe فهو ملف متجهات جاهز يمكن استخدامه مباشرة.</div>
+
+<h1>14. أخطاء شائعة</h1>
+<ol>
+<li>القول إن Word2Vec وGloVe نوعان من الكلمات؛ الصحيح أنهما طريقتان لتعلم المتجهات.</li>
+<li>الخلط بين Embedding وCosine Similarity؛ الأولى تمثيل، والثانية مقياس مقارنة.</li>
+<li>الاعتقاد أن Bag of Words يحفظ ترتيب الكلمات؛ هو لا يحفظ الترتيب.</li>
+<li>استخدام بيانات الاختبار لبناء Vocabulary أو تدريب Embedding.</li>
+<li>الاعتقاد أن نتيجة analogy مضمونة دائمًا.</li>
+<li>اعتبار Cosine Similarity مسافة عادية؛ هي تقارن الاتجاه.</li>
+</ol>
+
+<h1>15. أسئلة الامتحان والمقابلات</h1>
+<h2>ما هو Word Embedding؟</h2>
+<p>هو تمثيل Dense للكلمات في صورة متجهات عددية منخفضة الأبعاد، بحيث تكون الكلمات المتشابهة في المعنى أو السياق قريبة من بعضها في فضاء المتجهات.</p>
+<h2>ما الفرق بين Bag of Words وEmbedding؟</h2>
+<p>Bag of Words يمثل وجود الكلمات غالبًا باستخدام متجهات Sparse ولا يحفظ الترتيب أو التشابه الدلالي. أما Embedding فيمثل الكلمات بمتجهات Dense قابلة للتعلم، ويمكنه تمثيل العلاقات والتشابه.</p>
+<h2>ما الفرق بين Word2Vec وGloVe؟</h2>
+<p>كلاهما طريقتان لتعلم Word Embeddings. Word2Vec يتعلم من توقع الكلمات المحيطة، بينما GloVe يعتمد على إحصائيات التشارك بين الكلمات في النصوص.</p>
+<h2>ما وظيفة Cosine Similarity؟</h2>
+<p>تقيس تشابه اتجاه متجهين، وتستخدم لمعرفة مدى قرب كلمتين أو متجهين دلاليًا.</p>
+<h2>لماذا ظهرت queen في عملية woman - man + king؟</h2>
+<p>لأن فضاء GloVe تعلم اتجاهًا تقريبيًا للعلاقة بين man وwoman، وعند تطبيق هذا الاتجاه على king اقترب الناتج من queen.</p>
+<h2>هل Cosine Similarity تدرب النموذج؟</h2>
+<p>لا. هي لا تدرب Embedding ولا تغير الأوزان. هي فقط تقارن المتجهات بعد توفرها.</p>
+
+<h1>16. الخلاصة السريعة للحفظ</h1>
+<pre>Text
+ ↓
+Tokens
+ ↓
+Token IDs
+ ↓
+Word Embeddings
+ ↓
+Vectors
+ ↓
+Cosine Similarity
+ ↓
+Nearest semantic words</pre>
+<div class="callout"><strong>Bag of Words:</strong> هل الكلمة موجودة؟<br><strong>Embedding:</strong> ما العلاقة بين الكلمات؟<br><strong>Word2Vec وGloVe:</strong> كيف تعلمنا المتجهات؟<br><strong>Cosine Similarity:</strong> كيف نقارن المتجهات؟</div>
+<p>إذا ثبت هذا التسلسل في ذهنك، ستصبح المحاضرة والواجب واضحين: نحن نحول الكلمات إلى متجهات، ثم نستعمل اتجاهات هذه المتجهات لقياس التشابه واكتشاف العلاقات الدلالية.</p>
+
+<h1>17. قاموس مصطلحات سريع</h1>
+<table><tr><th>English</th><th>العربي</th></tr><tr><td>Vocabulary</td><td>قاموس الكلمات</td></tr><tr><td>Token</td><td>وحدة نصية</td></tr><tr><td>Multi-Hot Vector</td><td>متجه وجود/غياب</td></tr><tr><td>Dense Vector</td><td>متجه كثيف</td></tr><tr><td>Sparse Vector</td><td>متجه قليل القيم غير الصفرية</td></tr><tr><td>Pretrained</td><td>مدرّب مسبقًا</td></tr><tr><td>Semantic Similarity</td><td>تشابه دلالي</td></tr><tr><td>Co-occurrence</td><td>التشارك في الظهور</td></tr><tr><td>Analogy</td><td>علاقة قياس أو تشابه</td></tr></table>
+</body>
+</html>

@@ -1,0 +1,1 @@
+Word embeddings are techniques in natural language processing (NLP) that represent words as dense, numerical vectors in a continuous vector space, allowing machines to understand semantic meanings and relationships. This is the perfect guide to word embeddings
